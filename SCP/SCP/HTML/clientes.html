@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Clientes</title>
+
+    <link rel="stylesheet" href="/CSS/styles.css">
+</head>
+
+<body>
+
+    <!-- MENU -->
+    <div class="navbar">
+
+        <div class="dropdown">
+            <button class="dropbtn">
+                Cadastros ▼
+            </button>
+
+            <div class="dropdown-content">
+                <a href="categorias.html">Categoria</a>
+                <a href="clientes.html">Clientes</a>
+                <a href="produtos.html">Produtos</a>
+                <a href="usuarios.html">Usuários</a>
+            </div>
+        </div>
+
+        <a href="menu.html">Sair</a>
+
+    </div>
+
+    <!-- CONTEÚDO -->
+    <div class="container">
+
+        <!-- FORMULÁRIO -->
+        <div class="card">
+
+            <h1>Cadastro de Clientes</h1>
+
+            <form>
+
+                <label for="codigoCliente">
+                    Código do Cliente
+                </label>
+
+                <input type="text" id="codigoCliente">
+
+                <label for="nomeCliente">
+                    Nome Completo
+                </label>
+
+                <input type="text" id="nomeCliente">
+
+                <label for="cpfCliente">
+                    CPF
+                </label>
+
+                <input type="text" id="cpfCliente">
+
+                <label for="emailCliente">
+                    E-mail
+                </label>
+
+                <input type="email" id="emailCliente">
+
+                <label for="telefoneCliente">
+                    Telefone
+                </label>
+
+                <input type="text" id="telefoneCliente">
+
+                <label for="enderecoCliente">
+                    Endereço
+                </label>
+
+                <input type="text" id="enderecoCliente">
+
+                <button type="button">
+                    Salvar
+                </button>
+
+                <button type="reset">
+                    Limpar
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- LISTA -->
+        <div class="card">
+
+            <h2>Clientes Cadastrados</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>E-mail</th>
+                        <th>Telefone</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>1</td>
+                        <td>João Silva</td>
+                        <td>123.456.789-00</td>
+                        <td>joao@email.com</td>
+                        <td>(16) 99999-9999</td>
+                    </tr>
+
+                    <tr>
+                        <td>2</td>
+                        <td>Maria Oliveira</td>
+                        <td>987.654.321-00</td>
+                        <td>maria@email.com</td>
+                        <td>(16) 98888-8888</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
