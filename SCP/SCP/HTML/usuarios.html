@@ -4,8 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro de Usuários</title>
+  <title>Cadastro de Usuários - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -22,37 +24,26 @@
       </div>
     </div>
 
-    <a href="menu.html">Sair</a>
+    <a href="login.html">Sair</a>
   </div>
 
   <div class="container">
     <div class="card">
       <h1>Cadastro de Usuários</h1>
 
-      <form action="#" method="post">
-        <label for="codigo-usuario">Código</label>
-        <input type="text" id="codigo-usuario" name="codigo-usuario" placeholder="Digite o código" required>
+      <div id="mensagem" class="mensagem"></div>
+
+      <form id="form-cadastro">
 
         <label for="nome-usuario">Nome completo</label>
-        <input type="text" id="nome-usuario" name="nome-usuario" placeholder="Digite o nome completo" required>
+        <input type="text" id="nome-usuario" placeholder="Digite o nome completo" required>
 
-        <label for="login-usuario">Login</label>
-        <input type="text" id="login-usuario" name="login-usuario" placeholder="Digite o login" required>
-
-        <label for="email-usuario">E-mail</label>
-        <input type="email" id="email-usuario" name="email-usuario" placeholder="Digite o e-mail" required>
+        <label for="login-usuario">Login (Usuário)</label>
+        <input type="text" id="login-usuario" placeholder="Digite o login" required>
 
         <label for="senha-usuario">Senha</label>
-        <input type="password" id="senha-usuario" name="senha-usuario" placeholder="Digite a senha" required>
-
-        <label for="tipo-usuario">Tipo de usuário</label>
-        <select name="tipo-usuario" id="tipo-usuario" required>
-          <option value="">Selecionar</option>
-          <option value="administrador">Administrador</option>
-          <option value="vendedor">Vendedor</option>
-          <option value="estoque">Estoque</option>
-        </select>
-
+        <input type="password" id="senha-usuario" placeholder="Digite a senha" required>
+        
         <button type="submit">Salvar</button>
         <button type="reset" class="btn-limpar">Limpar</button>
       </form>
@@ -64,33 +55,20 @@
       <table>
         <thead>
           <tr>
-            <th>Código</th>
+            <th>Código (ID)</th>
             <th>Nome</th>
             <th>Login</th>
-            <th>E-mail</th>
-            <th>Tipo</th>
+            <th>Senha</th>
+            <th>Ações</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>001</td>
-            <td>João Silva</td>
-            <td>joao.silva</td>
-            <td>joao@email.com</td>
-            <td>Administrador</td>
-          </tr>
-          <tr>
-            <td>002</td>
-            <td>Maria Souza</td>
-            <td>maria.souza</td>
-            <td>maria@email.com</td>
-            <td>Vendedor</td>
-          </tr>
+        <tbody id="lista-usuarios">
         </tbody>
       </table>
     </div>
   </div>
 
+  <script src="../JS/cadastro-usuarios.js"></script>
 </body>
 
 </html>

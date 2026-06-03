@@ -4,33 +4,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menu Principal</title>
+  <title>Menu Principal - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-  <div class="navbar">
-    <div class="dropdown">
-      <button class="dropbtn">Cadastros ▼</button>
-      <div class="dropdown-content">
-        <a href="categorias.html">Categoria</a>
-        <a href="clientes.html">Clientes</a>
-        <a href="produtos.html">Produtos</a>
-        <a href="orcamentos.html">Orçamentos</a>
-        <a href="usuarios.html">Usuários</a>
-      </div>
-    </div>
-
-
-    <a href="login.html" class="dropbtn">Sair</a>
-  </div>
+  <header class="menu-header">
+    <div class="logo-sistema">SCP</div>
+    <a href="login.html" class="btn-sair">Sair</a>
+  </header>
 
   <div class="conteudo">
-    <h1>Bem-vindo ao Sistema</h1>
-    <p>Selecione uma opção no menu acima.</p>
+    <h1>Bem-vindo, <span id="nome-usuario">Usuário</span>!</h1>
+    <p>Painel de Controle Geral do SCP</p>
+
+    <div class="dashboard-cards">
+      <a href="produtos.html" class="card-atalho">
+        <h3>Produtos</h3>
+        <p>Gerenciar estoque e preços</p>
+      </a>
+
+      <a href="categorias.html" class="card-atalho">
+        <h3>Categorias</h3>
+        <p>Organizar grupos de produtos</p>
+      </a>
+
+      <a href="clientes.html" class="card-atalho">
+        <h3>Clientes</h3>
+        <p>Gerenciar compradores e dados</p>
+      </a>
+
+      <a href="orcamentos.html" class="card-atalho">
+        <h3>Orçamentos</h3>
+        <p>Criar e listar propostas</p>
+      </a>
+
+      <a href="usuarios.html" class="card-atalho">
+        <h3>Usuários</h3>
+        <p>Controle de funcionários</p>
+      </a>
+
+    </div>
   </div>
 
+  <script src="../JS/menu.js"></script>
 </body>
 
 </html>

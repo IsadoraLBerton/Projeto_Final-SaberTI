@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Login - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="login-page">
 
@@ -15,14 +17,16 @@
     </div>
 
     <div class="login-card">
-      <form action="menu.html" method="get">
-        <input type="email" id="email-login" name="email-login" placeholder="E-mail" required>
-        <input type="password" id="senha-login" name="senha-login" placeholder="Senha" required>
+      <form id="form-login">
+        <div id="mensagem" class="mensagem"></div>
+
+        <input type="text" id="usuario-login" placeholder="Usuário" required>
+        <input type="password" id="senha-login" placeholder="Senha" required>
 
         <button type="submit" class="btn-login">Entrar</button>
 
-        <a href="esqueci-senha.html" class="login-link">Esqueceu a senha?</a>
-
+        <a href="#" onclick="alert('Procure o administrador do sistema para resetar sua senha!')" class="login-link">Esqueceu a senha?</a>
+        
         <hr class="linha">
 
         <button type="reset" class="btn-cancelar">Cancelar</button>
@@ -30,5 +34,6 @@
     </div>
   </div>
 
+  <script src="../JS/login.js"></script>
 </body>
 </html>
