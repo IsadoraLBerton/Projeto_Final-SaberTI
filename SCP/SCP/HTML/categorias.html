@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro de Categoria</title>
-  <link rel="stylesheet" href="/CSS/styles.css">
+  <title>CRUD de Categorias</title>
+  <link rel="stylesheet" href="../CSS/styles.css">
 </head>
+
 <body>
 
   <div class="navbar">
@@ -14,27 +16,30 @@
       <div class="dropdown-content">
         <a href="categorias.html">Categoria</a>
         <a href="clientes.html">Clientes</a>
+        <a href="orcamentos.html">Orçamentos</a>
         <a href="produtos.html">Produtos</a>
         <a href="usuarios.html">Usuários</a>
       </div>
     </div>
-
     <a href="menu.html">Sair</a>
   </div>
 
   <div class="container">
+
     <div class="card">
-      <h1>Cadastro de Categoria</h1>
+      <h1 id="titulo-formulario">Cadastro de Categorias</h1>
 
-      <form action="#" method="post">
-        <label for="nomeCategoria">Nome da categoria</label>
-        <input type="text" id="nomeCategoria" name="nomeCategoria" placeholder="Digite o nome da categoria" required>
+      <form id="form-categoria">
+        <input type="hidden" id="codigo-categoria">
 
-        <label for="descricao">Descrição</label>
-        <textarea id="descricao" name="descricao" rows="4" placeholder="Digite uma descrição"></textarea>
+        <label for="descricao-categoria">Descrição da categoria *</label>
+        <input type="text" id="descricao-categoria" maxlength="50"
+          placeholder="Ex: Informática, Escritório, Alimentos..." required>
 
-        <button type="submit">Salvar</button>
-        <button type="reset" class="btn-limpar">Limpar</button>
+        <div class="form-buttons">
+          <button type="submit">Salvar</button>
+          <button type="reset" class="btn-limpar">Limpar</button>
+        </div>
       </form>
     </div>
 
@@ -44,21 +49,35 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Categoria</th>
-            <th>Descrição</th>
+            <th>Código</th>
+            <th>Descrição da Categoria</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>1</td>
-            <td>Eletrônicos</td>
-            <td>Produtos eletrônicos em geral</td>
+            <td>Informática</td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-excluir">Excluir</button>
+            </td>
           </tr>
           <tr>
             <td>2</td>
-            <td>Informática</td>
-            <td>Equipamentos de informática</td>
+            <td>Escritório</td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-excluir">Excluir</button>
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Alimentos</td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-excluir">Excluir</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -66,4 +85,5 @@
   </div>
 
 </body>
+
 </html>

@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentação de Orçamentos</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="dropdown">
+            <button class="dropbtn">Cadastros ▼</button>
+            <div class="dropdown-content">
+                <a href="categorias.html">Categoria</a>
+                <a href="clientes.html">Clientes</a>
+                <a href="produtos.html">Produtos</a>
+                <a href="orcamentos.html">Orçamentos</a>
+                <a href="usuarios.html">Usuários</a>
+            </div>
+        </div>
+        <a href="menu.html">Sair</a>
+    </div>
+
+    <div class="container">
+
+        <form id="form-orçamento">
+            <input type="hidden" id="codigo-orcamento">
+
+            <div class="card">
+                <h1>Tela de Orçamentos</h1>
+
+                <div class="form-row">
+                    <label for="cliente-orcamento">Cliente *</label>
+                    <select id="cliente-orcamento" required>
+                        <option value="">Selecionar Cliente</option>
+                    </select>
+
+                    <label for="data-orcamento">Data do Orçamento *</label>
+                    <input type="date" id="data-orcamento" required>
+
+                    <label for="data-validade">Data de Validade *</label>
+                    <input type="date" id="data-validade" required>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Itens do Orçamento</h3>
+
+                <div class="form-section-item">
+                    <label for="produto-item">Produto *</label>
+                    <select id="produto-item">
+                        <option value="">Selecionar Produto</option>
+                    </select>
+
+                    <label for="quantidade-item">Quantidade *</label>
+                    <input type="number" id="quantidade-item" step="0.01" min="0.01" placeholder="0.00">
+
+                    <label for="valor-unitario-item">Valor Unitário *</label>
+                    <input type="number" id="valor-unitario-item" step="0.01" min="0" placeholder="0.00">
+
+                    <button type="button" id="btn-adicionar-item" style="margin-top: 10px; background-color: #28a745;">
+                        Adicionar Item
+                    </button>
+                </div>
+
+                <br>
+                <hr><br>
+
+                <table id="tabela-itens-orcamento">
+                    <thead>
+                        <tr>
+                            <th>Prod. ID</th>
+                            <th>Descrição do Produto</th>
+                            <th>Quantidade</th>
+                            <th>Vl. Unitário</th>
+                            <th>Vl. Total Item</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-itens-orcamento">
+                        <tr>
+                            <td>1</td>
+                            <td>CHAPA METALICA</td>
+                            <td>10.00</td>
+                            <td>R$ 100,00</td>
+                            <td class="subtotal-item">R$ 1000,00</td>
+                            <td><button type="button" class="btn-excluir">Remover</button></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>FOLHA METALICA</td>
+                            <td>20.00</td>
+                            <td>R$ 10,00</td>
+                            <td class="subtotal-item">R$ 200,00</td>
+                            <td><button type="button" class="btn-excluir">Remover</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="total-geral-container" style="text-align: right; margin-top: 20px; font-size: 1.2rem;">
+                    <strong>Valor Total do Orçamento: </strong>
+                    <span id="valor-total-orcamento">R$ 1200,00</span>
+                </div>
+            </div>
+
+            <div class="form-buttons" style="margin-top: 20px;">
+                <button type="submit" style="font-size: 1.1rem; padding: 10px 20px;">Salvar Orçamento</button>
+                <button type="reset" class="btn-limpar">Limpar Tudo</button>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+
+</html>

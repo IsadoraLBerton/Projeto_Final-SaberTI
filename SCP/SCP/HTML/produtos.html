@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro de Produtos</title>
-  <link rel="stylesheet" href="/CSS/styles.css">
+  <title>CRUD de Produtos</title>
+  <link rel="stylesheet" href="../CSS/styles.css">
 </head>
+
 <body>
 
   <div class="navbar">
@@ -15,40 +17,46 @@
         <a href="categorias.html">Categoria</a>
         <a href="clientes.html">Clientes</a>
         <a href="produtos.html">Produtos</a>
+        <a href="orcamentos.html">Orçamentos</a>
         <a href="usuarios.html">Usuários</a>
       </div>
     </div>
-
     <a href="menu.html">Sair</a>
   </div>
 
   <div class="container">
+
     <div class="card">
-      <h1>Cadastro de Produtos</h1>
+      <h1 id="titulo-formulario">Cadastro de Produtos</h1>
 
-      <form action="#" method="post">
-        <label for="codigo-produto">Código do produto</label>
-        <input type="text" id="codigo-produto" name="codigo-produto" placeholder="Digite o código do produto" required>
+      <form id="form-produto">
+        <input type="hidden" id="produto-id">
 
-        <label for="descricao-simples">Descrição simples</label>
-        <input type="text" id="descricao-simples" name="descricao-simples" placeholder="Digite a descrição simples" required>
-
-        <label for="descricao-completa">Descrição completa</label>
-        <textarea id="descricao-completa" name="descricao-completa" rows="5" placeholder="Digite a descrição completa"></textarea>
-
-        <label for="valor-venda">Valor de venda</label>
-        <input type="number" step="0.01" min="0" id="valor-venda" name="valor-venda" placeholder="0.00" required>
-
-        <label for="categoria-codigo">Categoria do produto</label>
-        <select name="categoria-produto" id="categoria-codigo" required>
+        <label for="categoria-codigo">Categoria do produto *</label>
+        <select id="categoria-codigo" required>
           <option value="">Selecionar</option>
-          <option value="eletronico">Eletrônico</option>
-          <option value="mecanico">Mecânico</option>
-          <option value="informatica">Informática</option>
         </select>
 
-        <button type="submit">Salvar</button>
-        <button type="reset" class="btn-limpar">Limpar</button>
+        <label for="descricao-simples">Descrição *</label>
+        <input type="text" id="descricao-simples" maxlength="50" placeholder="Digite a descrição do produto" required>
+
+        <label for="descricao-completa">Observação</label>
+        <textarea id="descricao-completa" rows="4" maxlength="300"
+          placeholder="Digite as observações do produto"></textarea>
+
+        <label for="valor-venda">Valor de venda *</label>
+        <input type="number" step="0.01" min="0" id="valor-venda" placeholder="0.00" required>
+
+        <label for="status-produto">Status *</label>
+        <select id="status-produto" required>
+          <option value="ATIVO" selected>Ativo</option>
+          <option value="INATIVO">Inativo</option>
+        </select>
+
+        <div class="form-buttons">
+          <button type="submit" id="btn-salvar">Salvar</button>
+          <button type="reset" class="btn-limpar" id="btn-cancelar">Limpar</button>
+        </div>
       </form>
     </div>
 
@@ -59,28 +67,45 @@
         <thead>
           <tr>
             <th>Código</th>
-            <th>Produto</th>
             <th>Categoria</th>
+            <th>Descrição</th>
             <th>Valor</th>
+            <th>Data Cadastro</th>
+            <th>Status</th>
+            <th>Ações</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tabela-produtos-corpo">
           <tr>
-            <td>001</td>
-            <td>Mouse sem fio</td>
-            <td>Informática</td>
-            <td>R$ 59,90</td>
+            <td>1</td>
+            <td>Mecânico</td>
+            <td>CHAPA METALICA</td>
+            <td>R$ 106,22</td>
+            <td>18/02/2026</td>
+            <td><span class="status-badge ativo">Ativo</span></td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-excluir">Excluir</button>
+            </td>
           </tr>
           <tr>
-            <td>002</td>
-            <td>Fone Bluetooth</td>
-            <td>Eletrônico</td>
-            <td>R$ 129,90</td>
+            <td>2</td>
+            <td>Mecânico</td>
+            <td>FOLHA METALICA</td>
+            <td>R$ 10,88</td>
+            <td>18/02/2026</td>
+            <td><span class="status-badge ativo">Ativo</span></td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-excluir">Excluir</button>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
+
   </div>
 
 </body>
+
 </html>
