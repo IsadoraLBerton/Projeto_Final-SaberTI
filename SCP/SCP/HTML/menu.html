@@ -6,49 +6,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menu Principal - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
+  <!--  Cabeçalho com logo e botão sair -->
   <header class="menu-header">
     <div class="logo-sistema">SCP</div>
-    <a href="login.html" class="btn-sair">Sair</a>
+    <button onclick="sair()" class="btn-sair">Sair</button>
   </header>
 
   <div class="conteudo">
     <h1>Bem-vindo, <span id="nome-usuario">Usuário</span>!</h1>
-    <p>Painel de Controle Geral do SCP</p>
+    <p>Painel de Controle — SCP Sistema de Controle de Produtos e Orçamentos</p>
 
+    <!-- Cards de navegação -->
     <div class="dashboard-cards">
-      <a href="produtos.html" class="card-atalho">
-        <h3>Produtos</h3>
-        <p>Gerenciar estoque e preços</p>
-      </a>
-
-      <a href="categorias.html" class="card-atalho">
-        <h3>Categorias</h3>
-        <p>Organizar grupos de produtos</p>
-      </a>
 
       <a href="clientes.html" class="card-atalho">
+        <span class="card-icon">👥</span>
         <h3>Clientes</h3>
         <p>Gerenciar compradores e dados</p>
       </a>
 
+      <a href="categorias.html" class="card-atalho">
+        <span class="card-icon">🗂️</span>
+        <h3>Categorias</h3>
+        <p>Organizar grupos de produtos</p>
+      </a>
+
+      <a href="produtos.html" class="card-atalho">
+        <span class="card-icon">📦</span>
+        <h3>Produtos</h3>
+        <p>Gerenciar estoque e preços</p>
+      </a>
+
       <a href="orcamentos.html" class="card-atalho">
+        <span class="card-icon">📋</span>
         <h3>Orçamentos</h3>
         <p>Criar e listar propostas</p>
       </a>
 
       <a href="usuarios.html" class="card-atalho">
+        <span class="card-icon">🔑</span>
         <h3>Usuários</h3>
-        <p>Controle de funcionários</p>
+        <p>Controle de acesso</p>
       </a>
 
     </div>
   </div>
+
+  <footer>
+    SCP — Sistema de Controle de Produtos e Orçamentos &copy; 2026
+  </footer>
 
   <script src="../JS/menu.js"></script>
 </body>
