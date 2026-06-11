@@ -6,17 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Categorias - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
+  <!-- Barra de navegação -->
   <div class="navbar">
     <div class="dropdown">
       <button class="dropbtn">Cadastros ▼</button>
       <div class="dropdown-content">
-        <a href="categorias.html">Categoria</a>
+        <a href="categorias.html">Categorias</a>
         <a href="clientes.html">Clientes</a>
         <a href="orcamentos.html">Orçamentos</a>
         <a href="produtos.html">Produtos</a>
@@ -28,10 +28,15 @@
 
   <div class="container">
 
+    <!-- Card do formulário de cadastro -->
     <div class="card">
-      <h1 id="titulo-formulario">Cadastro de Categorias</h1>
+      <h1>Cadastro de Categorias</h1>
+
+      <!-- Área onde aparece a mensagem de sucesso ou erro -->
+      <div id="mensagem" class="mensagem"></div>
 
       <form id="form-categoria">
+        <!-- Campo oculto que guarda o ID quando estamos editando -->
         <input type="hidden" id="codigo-categoria">
 
         <label for="descricao-categoria">Descrição da categoria *</label>
@@ -39,14 +44,17 @@
           placeholder="Ex: Informática, Escritório, Alimentos..." required>
 
         <div class="form-buttons">
-          <button type="submit">Salvar</button>
+          <button type="submit" id="btn-salvar">Salvar</button>
           <button type="reset" class="btn-limpar">Limpar</button>
         </div>
       </form>
     </div>
 
+    <!-- Card da listagem -->
     <div class="card">
       <h2>Categorias Cadastradas</h2>
+
+      <input type="text" id="campo-busca" placeholder="🔍 Buscar categoria..." style="margin-bottom: 10px;">
 
       <table>
         <thead>
@@ -56,36 +64,18 @@
             <th>Ações</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Informática</td>
-            <td>
-              <button class="btn-editar">Editar</button>
-              <button class="btn-excluir">Excluir</button>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Escritório</td>
-            <td>
-              <button class="btn-editar">Editar</button>
-              <button class="btn-excluir">Excluir</button>
-            </td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>Alimentos</td>
-            <td>
-              <button class="btn-editar">Editar</button>
-              <button class="btn-excluir">Excluir</button>
-            </td>
-          </tr>
+        <tbody id="tabela-categorias-corpo">
         </tbody>
       </table>
     </div>
+
   </div>
 
+  <footer>
+    SCP — Sistema de Controle de Produtos e Orçamentos &copy; 2026
+  </footer>
+
+  <script src="../JS/cadastro-categorias.js"></script>
 </body>
 
 </html>
