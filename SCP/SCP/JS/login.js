@@ -12,21 +12,14 @@ const usuarioInput = document.getElementById("usuario-login");
 const senhaInput = document.getElementById("senha-login");
 const mensagem = document.getElementById("mensagem");
 
-/*
-  ============================================
-  FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
-  ============================================
-*/
+
+// FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
 function mostrarMensagem(texto, tipo) {
   mensagem.textContent = texto;
   mensagem.className = "mensagem " + tipo;
 }
 
-/*
-  ============================================
-  EVENTO DE ENVIO DO FORMULÁRIO (LOGIN)
-  ============================================
-*/
+// EVENTO DE ENVIO DO FORMULÁRIO (LOGIN)
 formLogin.addEventListener("submit", async function (evento) {
   // Impede a página de recarregar e perder os dados digitados
   evento.preventDefault();
