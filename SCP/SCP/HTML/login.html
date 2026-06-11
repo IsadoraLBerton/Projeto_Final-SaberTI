@@ -1,39 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
-  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body class="login-page">
 
   <div class="login-area">
+
+    // Lado esquerdo: parte da apresentação do sistema
     <div class="login-texto">
       <h1>SCP</h1>
-      <p>Acesse sua conta para gerenciar cadastros, produtos, categorias e usuários.</p>
+      <p>Sistema de Controle de Produtos e Orçamentos.<br>
+        Gerencie clientes, produtos, categorias e orçamentos em um só lugar.</p>
     </div>
 
+    // Lado direito: formulário de login
     <div class="login-card">
-      <form id="form-login">
-        <div id="mensagem" class="mensagem"></div>
 
-        <input type="text" id="usuario-login" placeholder="Usuário" required>
-        <input type="password" id="senha-login" placeholder="Senha" required>
+      // Área para exibir mensagens de erro ou sucesso
+      <div id="mensagem" class="mensagem"></div>
+
+      <form id="form-login">
+        <label for="usuario-login">Usuário</label>
+        <input type="text" id="usuario-login" placeholder="Digite seu usuário" required autocomplete="username">
+
+        <label for="senha-login">Senha</label>
+        <input type="password" id="senha-login" placeholder="Digite sua senha" required autocomplete="current-password">
 
         <button type="submit" class="btn-login">Entrar</button>
 
-        <a href="#" onclick="alert('Procure o administrador do sistema para resetar sua senha!')" class="login-link">Esqueceu a senha?</a>
-        
+        <a href="#" onclick="alert('Procure o administrador do sistema para resetar sua senha!')" class="login-link">
+          Esqueceu a senha?
+        </a>
+
         <hr class="linha">
 
         <button type="reset" class="btn-cancelar">Cancelar</button>
       </form>
     </div>
+
   </div>
 
   <script src="../JS/login.js"></script>
 </body>
+
 </html>
