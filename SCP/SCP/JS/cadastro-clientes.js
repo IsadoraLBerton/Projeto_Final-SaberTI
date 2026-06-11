@@ -19,21 +19,22 @@ const cpfCnpjInput = document.getElementById("cpf-cnpj-cliente");
 
 const btnSalvar = formCliente.querySelector("button[type='submit']");
 
-/*
-  ============================================
-  FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
-  ============================================
-*/
+
+//FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
 function mostrarMensagem(texto, tipo) {
     mensagem.textContent = texto;
     mensagem.className = "mensagem " + tipo;
 }
 
-/*
-  ============================================
-  CARREGAR CLIENTES
-  ============================================
-*/
+//FUNÇÃO PARA RETORNAR AO TOPO DA PÁGINA
+function irParaTopo() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+//CARREGAR CLIENTES
 async function carregarClientes() {
     // Faz um SELECT na tabela cliente 
     const { data, error } = await supabaseClient
@@ -44,6 +45,7 @@ async function carregarClientes() {
     if (error) {
         tabelaClientes.innerHTML = `<tr><td colspan="5">Erro ao carregar clientes.</td></tr>`;
         mostrarMensagem("Erro ao buscar clientes: " + error.message, "erro");
+        irParaTopo();
         return;
     }
 
@@ -59,7 +61,7 @@ async function carregarClientes() {
     data.forEach(function (cliente) {
         const linha = document.createElement("tr");
 
-    // Monta as colunas respeitando o cabeçalho do HTML
+        // Monta as colunas respeitando o cabeçalho do HTML
         linha.innerHTML = `
       <td>${cliente.clienteid}</td>
       <td>${cliente.tipo_cliente}</td>
@@ -89,17 +91,13 @@ async function carregarClientes() {
         linha.querySelector(".coluna-acoes").appendChild(botaoEditar);
         linha.querySelector(".coluna-acoes").appendChild(botaoExcluir);
 
-        tabelaClientes.appendChild(linha); 
+        tabelaClientes.appendChild(linha);
     });
 }
 
-/*
-  ============================================
-  PREPARAR EDIÇÃO
-  ============================================
-*/
+//PREPARAR EDIÇÃO
 function prepararEdicao(cliente) {
-    idClienteEditando = cliente.clienteid; 
+    idClienteEditando = cliente.clienteid;
 
     // Preenche os campos para o usuário alterar
     tipoInput.value = cliente.tipo_cliente;
@@ -108,45 +106,40 @@ function prepararEdicao(cliente) {
 
     btnSalvar.textContent = "Atualizar";
     mostrarMensagem("Editando o cliente: " + cliente.nome_cliente, "sucesso");
+
+    irParaTopo();
 }
 
-/*
-  ============================================
-  CANCELAR/LIMPAR EDIÇÃO
-  ============================================
-*/
+//CANCELAR/LIMPAR EDIÇÃO
 function limparFormulario() {
-    formCliente.reset();
     idClienteEditando = null;
     btnSalvar.textContent = "Salvar";
     mostrarMensagem("", "");
 }
 
-/*
-  ============================================
-  SALVAR NOVO CLIENTE
-  ============================================
-*/
+//SALVAR NOVO CLIENTE
 async function salvarCliente() {
     // 1. Conta quantos números puros foram digitados no campo
     const numerosPuros = cpfCnpjInput.value.replace(/\D/g, "").length;
     const tipoSelecionado = tipoInput.value;
 
-    // 2. VALIDAÇÃO: Se selecionou Física (F) mas digitou tamanho de CNPJ (14 dígitos)
-    if (tipoSelecionado === "F" && numerosPuros > 11) {
+    // 2. VALIDAÇÃO: Se selecionou Física (F) mas digitou tamanho de CNPJ (14 dígitos) ou menos dígitos do que o mínimo (11)
+    if (tipoSelecionado === "F" && numerosPuros !== 11) {
         mostrarMensagem(
             "Erro: Para Pessoa Física, digite um CPF válido (11 dígitos).",
             "erro",
         );
+        irParaTopo();
         return; // Trava a execução e não deixa salvar 
     }
 
     // 3. VALIDAÇÃO: Se selecionou Jurídica (J) mas digitou tamanho de CPF (11 dígitos ou menos)
-    if (tipoSelecionado === "J" && numerosPuros <= 11) {
+    if (tipoSelecionado === "J" && numerosPuros !== 14) {
         mostrarMensagem(
             "Erro: Para Pessoa Jurídica, digite um CNPJ válido (14 dígitos).",
             "erro",
         );
+        irParaTopo();
         return; // Trava a execução e não deixa salvar
     }
 
@@ -161,37 +154,37 @@ async function salvarCliente() {
 
     if (error) {
         mostrarMensagem("Erro ao salvar cliente: " + error.message, "erro");
+        irParaTopo();
         return;
     }
 
-    mostrarMensagem("Cliente saved com sucesso!", "sucesso");
+    mostrarMensagem("Cliente salvo com sucesso!", "sucesso");
+    irParaTopo();
     limparFormulario();
     carregarClientes();
 }
 
-/*
-  ============================================
-  ATUALIZAR CLIENTE EXISTENTE
-  ============================================
-*/
+//ATUALIZAR CLIENTE EXISTENTE
 async function atualizarCliente() {
     // VALIDAÇÃO ANTES DE ATUALIZAR
     const numerosPuros = cpfCnpjInput.value.replace(/\D/g, "").length;
     const tipoSelecionado = tipoInput.value;
 
-    if (tipoSelecionado === "F" && numerosPuros > 11) {
+    if (tipoSelecionado === "F" && numerosPuros !== 11) {
         mostrarMensagem(
             "Erro: Para Pessoa Física, digite um CPF válido (11 dígitos).",
             "erro",
         );
+        irParaTopo();
         return;
     }
 
-    if (tipoSelecionado === "J" && numerosPuros <= 11) {
+    if (tipoSelecionado === "J" && numerosPuros !== 14) {
         mostrarMensagem(
             "Erro: Para Pessoa Jurídica, digite um CNPJ válido (14 dígitos).",
             "erro",
         );
+        irParaTopo();
         return;
     }
 
@@ -209,19 +202,17 @@ async function atualizarCliente() {
 
     if (error) {
         mostrarMensagem("Erro ao atualizar cliente: " + error.message, "erro");
+        irParaTopo();
         return;
     }
 
     mostrarMensagem("Cliente atualizado com sucesso!", "sucesso");
+    irParaTopo();
     limparFormulario();
     carregarClientes();
 }
 
-/*
-  ============================================
-  EXCLUIR CLIENTE
-  ============================================
-*/
+//EXCLUIR CLIENTE
 async function excluirCliente(cliente) {
     const confirmou = confirm(
         "Deseja realmente excluir o cliente " + cliente.nome_cliente + "?",
@@ -236,6 +227,7 @@ async function excluirCliente(cliente) {
 
     if (error) {
         mostrarMensagem("Erro ao excluir cliente: " + error.message, "erro");
+        irParaTopo();
         return;
     }
 
@@ -245,14 +237,11 @@ async function excluirCliente(cliente) {
     }
 
     mostrarMensagem("Cliente excluído com sucesso!", "sucesso");
+    irParaTopo();
     carregarClientes();
 }
 
-/*
-  ============================================
-  EVENTOS E INICIALIZAÇÃO
-  ============================================
-*/
+//EVENTOS E INICIALIZAÇÃO
 formCliente.addEventListener("submit", async function (evento) {
     evento.preventDefault();
 
@@ -272,11 +261,7 @@ formCliente.addEventListener("reset", function () {
 // Inicializa a tabela trazendo os dados do Supabase
 carregarClientes();
 
-/*
-  ============================================
-  MÁSCARA AUTOMÁTICA DE CPF / CNPJ
-  ============================================
-*/
+//MÁSCARA AUTOMÁTICA DE CPF / CNPJ
 cpfCnpjInput.addEventListener("input", function (evento) {
     // 1. Remove tudo o que NÃO for número (letras, pontos antigos, etc.)
     let valor = evento.target.value.replace(/\D/g, "");
@@ -303,3 +288,27 @@ cpfCnpjInput.addEventListener("input", function (evento) {
     // 4. Devolve o valor formatado de volta para o input na tela
     evento.target.value = valor;
 });
+
+//FILTRO DE BUSCA NA TABELA
+function filtrarTabela() {
+    // Pega o texto digitado, converte para minúsculo para comparar sem diferenciar maiúscula
+    const textoBusca = document.getElementById("campo-busca").value.toLowerCase();
+
+    // Pega todas as linhas do tbody da tabela
+    const linhas = document.querySelectorAll("#lista-clientes tr");
+
+    linhas.forEach(function (linha) {
+        // Pega TODO o texto daquela linha (nome + cpf + tipo juntos)
+        const textoDaLinha = linha.textContent.toLowerCase();
+
+        // Se o texto da linha contém o que foi digitado, mostra. Se não, esconde.
+        if (textoDaLinha.includes(textoBusca)) {
+            linha.style.display = "";        // mostra a linha (volta ao padrão)
+        } else {
+            linha.style.display = "none";    // esconde a linha
+        }
+    });
+}
+
+// Evento: chama filtrarTabela() toda vez que o usuário digitar algo no campo
+document.getElementById("campo-busca").addEventListener("input", filtrarTabela);
