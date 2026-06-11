@@ -1,7 +1,7 @@
-  //CONTROLE DE SESSÃO E BOAS-VINDAS DO MENU
-
+// CONTROLE DE SESSÃO E BOAS-VINDAS DO MENU
 document.addEventListener("DOMContentLoaded", function () {
-  // Busca o nome do usuário que guardamos lá no login.js
+
+  // Busca o nome do usuário que guardamos no login.js usando sessionStorage
   const usuarioLogado = sessionStorage.getItem("usuarioLogado");
   const elementoNome = document.getElementById("nome-usuario");
 
@@ -15,3 +15,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Se passou no teste, exibe o nome real da pessoa na tela
   elementoNome.textContent = usuarioLogado;
 });
+
+// FUNÇÃO SAIR: Limpa a sessão e redireciona para o login.
+function sair() {
+  // Remove o dado de sessão armazenada no login
+  sessionStorage.removeItem("usuarioLogado");
+  // Manda o usuário de volta para a tela de login
+  window.location.href = "login.html";
+}
