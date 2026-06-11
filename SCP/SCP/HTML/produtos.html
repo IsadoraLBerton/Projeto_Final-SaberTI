@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Produtos - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -16,7 +15,7 @@
     <div class="dropdown">
       <button class="dropbtn">Cadastros ▼</button>
       <div class="dropdown-content">
-        <a href="categorias.html">Categoria</a>
+        <a href="categorias.html">Categorias</a>
         <a href="clientes.html">Clientes</a>
         <a href="produtos.html">Produtos</a>
         <a href="orcamentos.html">Orçamentos</a>
@@ -29,29 +28,33 @@
   <div class="container">
 
     <div class="card">
-      <h1 id="titulo-formulario">Cadastro de Produtos</h1>
+      <h1>Cadastro de Produtos</h1>
+
+      <!-- Área de mensagem de feedback -->
+      <div id="mensagem" class="mensagem"></div>
 
       <form id="form-produto">
+        <!-- Campo oculto para guardar o ID -->
         <input type="hidden" id="produto-id">
 
-        <label for="categoria-codigo">Categoria do produto *</label>
+        <label for="categoria-codigo">Categoria do produto:</label>
         <select id="categoria-codigo" required>
           <option value="">Selecionar</option>
         </select>
 
-        <label for="descricao-simples">Descrição *</label>
+        <label for="descricao-simples">Descrição:</label>
         <input type="text" id="descricao-simples" maxlength="50" placeholder="Digite a descrição do produto" required>
 
         <label for="descricao-completa">Observação</label>
-        <textarea id="descricao-completa" rows="4" maxlength="300"
-          placeholder="Digite as observações do produto"></textarea>
+        <textarea id="descricao-completa" rows="3" maxlength="300"
+          placeholder="Informações adicionais do produto (opcional)"></textarea>
 
-        <label for="valor-venda">Valor de venda *</label>
+        <label for="valor-venda">Valor de venda (R$):</label>
         <input type="number" step="0.01" min="0" id="valor-venda" placeholder="0.00" required>
 
-        <label for="status-produto">Status *</label>
+        <label for="status-produto">Status:</label>
         <select id="status-produto" required>
-          <option value="ATIVO" selected>Ativo</option>
+          <option value="ATIVO">Ativo</option>
           <option value="INATIVO">Inativo</option>
         </select>
 
@@ -65,6 +68,14 @@
     <div class="card">
       <h2>Produtos Cadastrados</h2>
 
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <input type="text" id="campo-busca" placeholder="🔍 Buscar por descrição ou categoria..." style="flex: 1;">
+        <select id="filtro-status" style="width: 140px;">
+          <option value="">Todos</option>
+          <option value="ativo">Ativos</option>
+          <option value="inativo">Inativos</option>
+        </select>
+      </div>
       <table>
         <thead>
           <tr>
@@ -78,36 +89,17 @@
           </tr>
         </thead>
         <tbody id="tabela-produtos-corpo">
-          <tr>
-            <td>1</td>
-            <td>Mecânico</td>
-            <td>CHAPA METALICA</td>
-            <td>R$ 106,22</td>
-            <td>18/02/2026</td>
-            <td><span class="status-badge ativo">Ativo</span></td>
-            <td>
-              <button class="btn-editar">Editar</button>
-              <button class="btn-excluir">Excluir</button>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Mecânico</td>
-            <td>FOLHA METALICA</td>
-            <td>R$ 10,88</td>
-            <td>18/02/2026</td>
-            <td><span class="status-badge ativo">Ativo</span></td>
-            <td>
-              <button class="btn-editar">Editar</button>
-              <button class="btn-excluir">Excluir</button>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
 
   </div>
 
+  <footer>
+    SCP — Sistema de Controle de Produtos e Orçamentos &copy; 2026
+  </footer>
+
+  <script src="../JS/cadastro-produtos.js"></script>
 </body>
 
 </html>
