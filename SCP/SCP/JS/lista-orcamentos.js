@@ -22,10 +22,7 @@ let cacheOrcamentos = [];
 // Orçamento aberto no modal (usado no botão imprimir)
 let orcamentoAberto = null;
 
-/* ==========================================================================
-   UTILITÁRIOS
-   ========================================================================== */
-
+//UTILITÁRIOS
 function formatarDataISO(dataString) {
   if (!dataString) return "--/--/----";
   const d = new Date(dataString);
@@ -45,7 +42,7 @@ function moedaBR(valor) {
   return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
- //CARREGAR HISTÓRICO DO SUPABASE
+//CARREGAR HISTÓRICO DO SUPABASE
 async function carregarHistoricoOrcamentos() {
   corpoTabela.innerHTML = `<tr><td colspan="7">Carregando...</td></tr>`;
 

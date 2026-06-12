@@ -11,6 +11,8 @@ const mensagem = document.getElementById("mensagem");
 
 // Id para controle de edição
 let idClienteEditando = null;
+let resetAutomatico = false;
+let temporizadorMensagem = null;
 
 // Capturando os inputs do formulário de clientes
 const tipoInput = document.getElementById("tipo-cliente");
@@ -21,9 +23,17 @@ const btnSalvar = formCliente.querySelector("button[type='submit']");
 
 
 //FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
-function mostrarMensagem(texto, tipo) {
+function mostrarMensagem(texto, tipo, sumirDepois = false) {
+    clearTimeout(temporizadorMensagem);
+
     mensagem.textContent = texto;
     mensagem.className = "mensagem " + tipo;
+
+    if (sumirDepois) {
+        temporizadorMensagem = setTimeout(function () {
+            mostrarMensagem("", "");
+        }, 3000);
+    }
 }
 
 //FUNÇÃO PARA RETORNAR AO TOPO DA PÁGINA
@@ -32,6 +42,136 @@ function irParaTopo() {
         top: 0,
         behavior: "smooth"
     });
+}
+
+function normalizarTipoCliente(tipo) {
+    const valor = (tipo || "")
+        .toString()
+        .trim()
+        .toUpperCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    if (valor === "F" || valor.includes("FISICA")) return "F";
+    if (valor === "J" || valor.includes("JURIDICA")) return "J";
+
+    return valor;
+}
+
+function somenteNumeros(valor) {
+    return (valor || "").replace(/\D/g, "");
+}
+
+function todosDigitosIguais(numeros) {
+    return /^(\d)\1+$/.test(numeros);
+}
+
+function cpfValido(cpf) {
+    if (cpf.length !== 11 || todosDigitosIguais(cpf)) return false;
+
+    let soma = 0;
+    for (let i = 0; i < 9; i++) {
+        soma += Number(cpf[i]) * (10 - i);
+    }
+
+    let digito = (soma * 10) % 11;
+    if (digito === 10) digito = 0;
+    if (digito !== Number(cpf[9])) return false;
+
+    soma = 0;
+    for (let i = 0; i < 10; i++) {
+        soma += Number(cpf[i]) * (11 - i);
+    }
+
+    digito = (soma * 10) % 11;
+    if (digito === 10) digito = 0;
+
+    return digito === Number(cpf[10]);
+}
+
+function cnpjValido(cnpj) {
+    if (cnpj.length !== 14 || todosDigitosIguais(cnpj)) return false;
+
+    const calcularDigito = function (base, pesos) {
+        const soma = base
+            .split("")
+            .reduce(function (total, numero, index) {
+                return total + Number(numero) * pesos[index];
+            }, 0);
+
+        const resto = soma % 11;
+        return resto < 2 ? 0 : 11 - resto;
+    };
+
+    const primeiroDigito = calcularDigito(cnpj.slice(0, 12), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+    const segundoDigito = calcularDigito(cnpj.slice(0, 13), [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+
+    return primeiroDigito === Number(cnpj[12]) && segundoDigito === Number(cnpj[13]);
+}
+
+function documentoValido(tipoCliente, documento) {
+    if (tipoCliente === "F") return cpfValido(documento);
+    if (tipoCliente === "J") return cnpjValido(documento);
+
+    return false;
+}
+
+async function documentoJaCadastrado(documento, clienteidIgnorado = null) {
+    const { data, error } = await supabaseClient
+        .from("cliente")
+        .select("clienteid, cpf_cnpj_cliente");
+
+    if (error) {
+        return { duplicado: false, error };
+    }
+
+    const clienteDuplicado = data.find(function (cliente) {
+        const mesmoDocumento = somenteNumeros(cliente.cpf_cnpj_cliente) === documento;
+        const mesmoClienteEditando = clienteidIgnorado !== null && cliente.clienteid === clienteidIgnorado;
+
+        return mesmoDocumento && !mesmoClienteEditando;
+    });
+
+    return { duplicado: Boolean(clienteDuplicado), error: null };
+}
+
+async function validarDocumentoCliente(tipoSelecionado, clienteidIgnorado = null) {
+    const documento = somenteNumeros(cpfCnpjInput.value);
+    const nomeDocumento = tipoSelecionado === "F" ? "CPF" : "CNPJ";
+
+    if (tipoSelecionado === "F" && documento.length !== 11) {
+        mostrarMensagem("Erro: Para Pessoa Física, digite um CPF válido (11 dígitos).", "erro");
+        irParaTopo();
+        return false;
+    }
+
+    if (tipoSelecionado === "J" && documento.length !== 14) {
+        mostrarMensagem("Erro: Para Pessoa Jurídica, digite um CNPJ válido (14 dígitos).", "erro");
+        irParaTopo();
+        return false;
+    }
+
+    if (!documentoValido(tipoSelecionado, documento)) {
+        mostrarMensagem("Erro: " + nomeDocumento + " inválido.", "erro");
+        irParaTopo();
+        return false;
+    }
+
+    const { duplicado, error } = await documentoJaCadastrado(documento, clienteidIgnorado);
+
+    if (error) {
+        mostrarMensagem("Erro ao verificar documento: " + error.message, "erro");
+        irParaTopo();
+        return false;
+    }
+
+    if (duplicado) {
+        mostrarMensagem("Erro: Já existe um cliente cadastrado com este " + nomeDocumento + ".", "erro");
+        irParaTopo();
+        return false;
+    }
+
+    return true;
 }
 
 //CARREGAR CLIENTES
@@ -75,8 +215,8 @@ async function carregarClientes() {
         botaoEditar.textContent = "Editar";
         botaoEditar.className = "btn-editar";
         botaoEditar.type = "button";
-        botaoEditar.addEventListener("click", function () {
-            prepararEdicao(cliente);
+        botaoEditar.addEventListener("click", async function () {
+            await prepararEdicao(cliente.clienteid);
         });
 
         // Botão Excluir
@@ -96,13 +236,25 @@ async function carregarClientes() {
 }
 
 //PREPARAR EDIÇÃO
-function prepararEdicao(cliente) {
+async function prepararEdicao(clienteid) {
+    const { data: cliente, error } = await supabaseClient
+        .from("cliente")
+        .select("clienteid, tipo_cliente, nome_cliente, cpf_cnpj_cliente")
+        .eq("clienteid", clienteid)
+        .single();
+
+    if (error) {
+        mostrarMensagem("Erro ao carregar cliente para edição: " + error.message, "erro");
+        irParaTopo();
+        return;
+    }
+
     idClienteEditando = cliente.clienteid;
 
     // Preenche os campos para o usuário alterar
-    tipoInput.value = cliente.tipo_cliente;
-    nomeInput.value = cliente.nome_cliente;
-    cpfCnpjInput.value = cliente.cpf_cnpj_cliente;
+    tipoInput.value = normalizarTipoCliente(cliente.tipo_cliente);
+    nomeInput.value = cliente.nome_cliente || "";
+    cpfCnpjInput.value = cliente.cpf_cnpj_cliente || "";
 
     btnSalvar.textContent = "Atualizar";
     mostrarMensagem("Editando o cliente: " + cliente.nome_cliente, "sucesso");
@@ -111,10 +263,15 @@ function prepararEdicao(cliente) {
 }
 
 //CANCELAR/LIMPAR EDIÇÃO
-function limparFormulario() {
+function limparFormulario(limparMensagem = true) {
+    resetAutomatico = true;
+    formCliente.reset();
+    resetAutomatico = false;
     idClienteEditando = null;
     btnSalvar.textContent = "Salvar";
-    mostrarMensagem("", "");
+    if (limparMensagem) {
+        mostrarMensagem("", "");
+    }
 }
 
 //SALVAR NOVO CLIENTE
@@ -122,6 +279,8 @@ async function salvarCliente() {
     // 1. Conta quantos números puros foram digitados no campo
     const numerosPuros = cpfCnpjInput.value.replace(/\D/g, "").length;
     const tipoSelecionado = tipoInput.value;
+
+    if (!(await validarDocumentoCliente(tipoSelecionado))) return;
 
     // 2. VALIDAÇÃO: Se selecionou Física (F) mas digitou tamanho de CNPJ (14 dígitos) ou menos dígitos do que o mínimo (11)
     if (tipoSelecionado === "F" && numerosPuros !== 11) {
@@ -158,9 +317,9 @@ async function salvarCliente() {
         return;
     }
 
-    mostrarMensagem("Cliente salvo com sucesso!", "sucesso");
+    mostrarMensagem("Cliente salvo com sucesso!", "sucesso", true);
     irParaTopo();
-    limparFormulario();
+    limparFormulario(false);
     carregarClientes();
 }
 
@@ -169,6 +328,8 @@ async function atualizarCliente() {
     // VALIDAÇÃO ANTES DE ATUALIZAR
     const numerosPuros = cpfCnpjInput.value.replace(/\D/g, "").length;
     const tipoSelecionado = tipoInput.value;
+
+    if (!(await validarDocumentoCliente(tipoSelecionado, idClienteEditando))) return;
 
     if (tipoSelecionado === "F" && numerosPuros !== 11) {
         mostrarMensagem(
@@ -206,9 +367,9 @@ async function atualizarCliente() {
         return;
     }
 
-    mostrarMensagem("Cliente atualizado com sucesso!", "sucesso");
+    mostrarMensagem("Cliente atualizado com sucesso!", "sucesso", true);
     irParaTopo();
-    limparFormulario();
+    limparFormulario(false);
     carregarClientes();
 }
 
@@ -236,7 +397,7 @@ async function excluirCliente(cliente) {
         limparFormulario();
     }
 
-    mostrarMensagem("Cliente excluído com sucesso!", "sucesso");
+    mostrarMensagem("Cliente excluído com sucesso!", "sucesso", true);
     irParaTopo();
     carregarClientes();
 }
@@ -255,7 +416,13 @@ formCliente.addEventListener("submit", async function (evento) {
 });
 
 formCliente.addEventListener("reset", function () {
-    setTimeout(limparFormulario, 10);
+    if (resetAutomatico) return;
+
+    setTimeout(function () {
+        idClienteEditando = null;
+        btnSalvar.textContent = "Salvar";
+        mostrarMensagem("", "");
+    }, 10);
 });
 
 // Inicializa a tabela trazendo os dados do Supabase

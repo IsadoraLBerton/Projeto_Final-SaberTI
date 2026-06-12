@@ -11,6 +11,8 @@ const mensagem = document.getElementById("mensagem");
 
 // Id para controle de edição
 let idUsuarioEditando = null;
+let resetAutomatico = false;
+let temporizadorMensagem = null;
 
 // Capturando os inputs do formulário de usuários
 const nomeInput = document.getElementById("nome-usuario");
@@ -24,9 +26,17 @@ const btnSalvar = formCadastro.querySelector("button[type='submit']");
   FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
   ============================================
 */
-function mostrarMensagem(texto, tipo) {
+function mostrarMensagem(texto, tipo, sumirDepois = false) {
+    clearTimeout(temporizadorMensagem);
+
     mensagem.textContent = texto;
     mensagem.className = "mensagem " + tipo;
+
+    if (sumirDepois) {
+        temporizadorMensagem = setTimeout(function () {
+            mostrarMensagem("", "");
+        }, 3000);
+    }
 }
 
 /*
@@ -113,11 +123,15 @@ function prepararEdicao(usuario) {
   CANCELAR/LIMPAR EDIÇÃO
   ============================================
 */
-function limparFormulario() {
+function limparFormulario(limparMensagem = true) {
+    resetAutomatico = true;
     formCadastro.reset();
+    resetAutomatico = false;
     idUsuarioEditando = null;
     btnSalvar.textContent = "Salvar";
-    mostrarMensagem("", "");
+    if (limparMensagem) {
+        mostrarMensagem("", "");
+    }
 }
 
 /*
@@ -139,8 +153,8 @@ async function salvarUsuario() {
         return;
     }
 
-    mostrarMensagem("Usuário salvo com sucesso!", "sucesso");
-    limparFormulario();
+    mostrarMensagem("Usuário salvo com sucesso!", "sucesso", true);
+    limparFormulario(false);
     carregarUsuarios();
 }
 
@@ -170,8 +184,8 @@ async function atualizarUsuario() {
         return;
     }
 
-    mostrarMensagem("Usuário atualizado com sucesso!", "sucesso");
-    limparFormulario();
+    mostrarMensagem("Usuário atualizado com sucesso!", "sucesso", true);
+    limparFormulario(false);
     carregarUsuarios();
 }
 
@@ -199,7 +213,7 @@ async function excluirUsuario(usuario) {
         limparFormulario();
     }
 
-    mostrarMensagem("Usuário excluído com sucesso!", "sucesso");
+    mostrarMensagem("Usuário excluído com sucesso!", "sucesso", true);
     carregarUsuarios();
 }
 
@@ -222,8 +236,36 @@ formCadastro.addEventListener("submit", async function (evento) {
 
 // Vincula o botão limpar para também cancelar variáveis de edição
 formCadastro.addEventListener("reset", function () {
-    setTimeout(limparFormulario, 10);
+    if (resetAutomatico) return;
+
+    setTimeout(function () {
+        idUsuarioEditando = null;
+        btnSalvar.textContent = "Salvar";
+        mostrarMensagem("", "");
+    }, 10);
 });
 
 // Executa a listagem automática ao entrar na tela
 carregarUsuarios();
+
+function filtrarTabela() {
+    const textoBusca = document.getElementById("campo-busca").value.toLowerCase();
+    const linhas = document.querySelectorAll("#lista-usuarios tr");
+
+    linhas.forEach(function (linha) {
+        const colunas = linha.querySelectorAll("td");
+        const textoDaLinha = [
+            colunas[0]?.textContent || "",
+            colunas[1]?.textContent || "",
+            colunas[2]?.textContent || "",
+        ].join(" ").toLowerCase();
+
+        if (textoDaLinha.includes(textoBusca)) {
+            linha.style.display = "";
+        } else {
+            linha.style.display = "none";
+        }
+    });
+}
+
+document.getElementById("campo-busca").addEventListener("input", filtrarTabela);

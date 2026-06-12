@@ -16,11 +16,21 @@ const descricaoInput = document.getElementById("descricao-categoria");
 // Variável de controle: guarda o ID do registro que está sendo editado.
 // Quando é null, significa que vamos INSERIR. Quando tem número, vamos ATUALIZAR.
 let idCategoriaEditando = null;
+let resetAutomatico = false;
+let temporizadorMensagem = null;
 
 //FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
-function mostrarMensagem(texto, tipo) {
+function mostrarMensagem(texto, tipo, sumirDepois = false) {
+  clearTimeout(temporizadorMensagem);
+
   mensagemDiv.textContent = texto;
   mensagemDiv.className = "mensagem " + tipo;
+
+  if (sumirDepois) {
+    temporizadorMensagem = setTimeout(function () {
+      mostrarMensagem("", "");
+    }, 3000);
+  }
 }
 
 //CARREGAR CATEGORIAS
@@ -92,10 +102,15 @@ function prepararEdicao(categoria) {
 }
 
 //LIMPAR FORMULÁRIO / CANCELAR EDIÇÃO
-function limparFormulario() {
+function limparFormulario(limparMensagem = true) {
+  resetAutomatico = true;
+  formCategoria.reset();
+  resetAutomatico = false;
   idCategoriaEditando = null;
   btnSalvar.textContent = "Salvar";
-  mostrarMensagem("", "");
+  if (limparMensagem) {
+    mostrarMensagem("", "");
+  }
 }
 
 //SALVAR OU ATUALIZAR
@@ -125,7 +140,7 @@ formCategoria.addEventListener("submit", async function (evento) {
       mostrarMensagem("Erro ao atualizar categoria: " + error.message, "erro");
       return;
     }
-    mostrarMensagem("Categoria atualizada com sucesso!", "sucesso");
+    mostrarMensagem("Categoria atualizada com sucesso!", "sucesso", true);
   } else {
     const { error } = await supabaseClient
       .from("categoria_produto")
@@ -135,10 +150,10 @@ formCategoria.addEventListener("submit", async function (evento) {
       mostrarMensagem("Erro ao cadastrar categoria: " + error.message, "erro");
       return;
     }
-    mostrarMensagem("Categoria cadastrada com sucesso!", "sucesso");
+    mostrarMensagem("Categoria cadastrada com sucesso!", "sucesso", true);
   }
 
-  limparFormulario();
+  limparFormulario(false);
   carregarCategorias(); // Atualiza a tabela logo abaixo
 });
 
@@ -163,13 +178,19 @@ async function excluirCategoria(categoria) {
     limparFormulario();
   }
 
-  mostrarMensagem("Categoria removida com sucesso!", "sucesso");
+  mostrarMensagem("Categoria removida com sucesso!", "sucesso", true);
   carregarCategorias();
 }
 
 // Quando o botão Limpar/Reset é clicado, também reseta as variáveis de controle
 formCategoria.addEventListener("reset", function () {
-  setTimeout(limparFormulario, 10);
+  if (resetAutomatico) return;
+
+  setTimeout(function () {
+    idCategoriaEditando = null;
+    btnSalvar.textContent = "Salvar";
+    mostrarMensagem("", "");
+  }, 10);
 });
 
 // Executa ao abrir a página: carrega as categorias já cadastradas

@@ -13,6 +13,8 @@ const mensagemDiv = document.getElementById("mensagem");
 
 // Variável de controle: null = inserir, número = editar
 let idProdutoEditando = null;
+let resetAutomatico = false;
+let temporizadorMensagem = null;
 
 // Inputs do formulário
 const idInputHidden = document.getElementById("produto-id");
@@ -21,13 +23,31 @@ const observacaoInput = document.getElementById("descricao-completa");
 const valorInput = document.getElementById("valor-venda");
 const statusInput = document.getElementById("status-produto");
 
-//FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
-function mostrarMensagem(texto, tipo) {
+/*
+  ============================================
+  FUNÇÃO PARA MOSTRAR MENSAGEM NA TELA
+  ============================================
+*/
+function mostrarMensagem(texto, tipo, sumirDepois = false) {
+  clearTimeout(temporizadorMensagem);
+
   mensagemDiv.textContent = texto;
   mensagemDiv.className = "mensagem " + tipo;
+
+  if (sumirDepois) {
+    temporizadorMensagem = setTimeout(function () {
+      mostrarMensagem("", "");
+    }, 3000);
+  }
 }
 
-//CARREGAR CATEGORIAS 
+/*
+  =======================================================
+  1. CARREGAR CATEGORIAS NO SELECT
+  Busca as categorias do banco e preenche o <select>
+  para o usuário poder escolher ao cadastrar um produto.
+  =======================================================
+*/
 async function carregarCategoriasNoSelect() {
   const { data, error } = await supabaseClient
     .from("categoria_produto")
@@ -44,14 +64,20 @@ async function carregarCategoriasNoSelect() {
 
   data.forEach(function (categoria) {
     const opcao = document.createElement("option");
-    opcao.value = categoria.categoriaprodutoid;
-    opcao.textContent = categoria.ds_categoria_produto;
+    opcao.value = categoria.categoriaprodutoid; // O VALUE guarda o ID (número)
+    opcao.textContent = categoria.ds_categoria_produto; // O TEXTO mostra o nome
     selectCategoria.appendChild(opcao);
   });
 }
 
-//CARREGAR PRODUTOS NA TABELA (Read do CRUD)
+/*
+  =======================================================
+  2. CARREGAR PRODUTOS NA TABELA (Read do CRUD)
+  =======================================================
+*/
 async function carregarProdutos() {
+  // O asterisco após "categoria_produto" é uma JOIN automática do Supabase:
+  // ele vai buscar o nome da categoria usando o relacionamento pelo ID
   const { data, error } = await supabaseClient
     .from("produto")
     .select(`
@@ -82,20 +108,21 @@ async function carregarProdutos() {
   data.forEach(function (produto) {
     const linha = document.createElement("tr");
 
+    // Formata a data de ISO (2025-02-18) para o padrão brasileiro (18/02/2025)
     const dataFormatada = new Date(produto.dt_cadastro_produto).toLocaleDateString("pt-BR");
 
-    // Formata o valor para moeda brasileira
+    // Formata o valor para moeda brasileira: R$ 1.234,56
     const valorFormatado = parseFloat(produto.vl_venda_produto).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL"
     });
 
-    // Pega o nome da categoria
+    // Pega o nome da categoria que veio do relacionamento
     const nomeCategoria = produto.categoria_produto
       ? produto.categoria_produto.ds_categoria_produto
       : "Sem Categoria";
 
-    // Define a classe do badge de status (ativo ou inativo) 
+    // Define a classe do badge de status (ativo ou inativo) — o CSS vai colorir
     const classeStatus = produto.status_produto.toUpperCase() === "ATIVO" ? "ativo" : "inativo";
 
     linha.innerHTML = `
@@ -131,7 +158,12 @@ async function carregarProdutos() {
   });
 }
 
-//PREPARAR EDIÇÃO
+/*
+  =======================================================
+  3. PREPARAR EDIÇÃO
+  Preenche o formulário com os dados do produto clicado.
+  =======================================================
+*/
 function prepararEdicao(produto) {
   idProdutoEditando = produto.produtoid;
   idInputHidden.value = produto.produtoid;
@@ -147,22 +179,34 @@ function prepararEdicao(produto) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-//LIMPAR FORMULÁRIO
-function limparFormulario() {
+/*
+  =======================================================
+  4. LIMPAR FORMULÁRIO
+  =======================================================
+*/
+function limparFormulario(limparMensagem = true) {
+  resetAutomatico = true;
   formProduto.reset();
+  resetAutomatico = false;
   idProdutoEditando = null;
   idInputHidden.value = "";
   btnSalvar.textContent = "Salvar";
-  mostrarMensagem("", "");
+  if (limparMensagem) {
+    mostrarMensagem("", "");
+  }
 }
 
-//SALVAR OU ATUALIZAR
+/*
+  =======================================================
+  5. SALVAR OU ATUALIZAR
+  =======================================================
+*/
 formProduto.addEventListener("submit", async function (evento) {
   evento.preventDefault();
 
   // Validação manual — verifica campos obrigatórios
   if (!selectCategoria.value || !descricaoInput.value || !valorInput.value || !statusInput.value) {
-    mostrarMensagem("Preencha todos os campos obrigatórios.", "erro");
+    mostrarMensagem("Preencha todos os campos obrigatórios (*).", "erro");
     return;
   }
 
@@ -186,7 +230,7 @@ formProduto.addEventListener("submit", async function (evento) {
       mostrarMensagem("Erro ao atualizar produto: " + error.message, "erro");
       return;
     }
-    mostrarMensagem("Produto atualizado com sucesso!", "sucesso");
+    mostrarMensagem("Produto atualizado com sucesso!", "sucesso", true);
   } else {
     const { error } = await supabaseClient
       .from("produto")
@@ -196,14 +240,18 @@ formProduto.addEventListener("submit", async function (evento) {
       mostrarMensagem("Erro ao cadastrar produto: " + error.message, "erro");
       return;
     }
-    mostrarMensagem("Produto cadastrado com sucesso!", "sucesso");
+    mostrarMensagem("Produto cadastrado com sucesso!", "sucesso", true);
   }
 
-  limparFormulario();
+  limparFormulario(false);
   carregarProdutos();
 });
 
-//EXCLUIR PRODUTO
+/*
+  =======================================================
+  6. EXCLUIR PRODUTO
+  =======================================================
+*/
 async function excluirProduto(produto) {
   const confirmou = confirm(`Deseja realmente excluir o produto "${produto.ds_produto}"?`);
   if (!confirmou) return;
@@ -222,12 +270,19 @@ async function excluirProduto(produto) {
     limparFormulario();
   }
 
-  mostrarMensagem("Produto removido com sucesso!", "sucesso");
+  mostrarMensagem("Produto removido com sucesso!", "sucesso", true);
   carregarProdutos();
 }
 
 formProduto.addEventListener("reset", function () {
-  setTimeout(limparFormulario, 10);
+  if (resetAutomatico) return;
+
+  setTimeout(function () {
+    idProdutoEditando = null;
+    idInputHidden.value = "";
+    btnSalvar.textContent = "Salvar";
+    mostrarMensagem("", "");
+  }, 10);
 });
 
 // Carrega categorias no select E produtos na tabela ao abrir a tela
@@ -238,7 +293,6 @@ async function inicializarTela() {
 
 inicializarTela();
 
-//FILTRO PARA PESQUISA NA TABELA
 function filtrarTabela() {
   const textoBusca = document.getElementById("campo-busca").value.toLowerCase();
   const statusFiltro = document.getElementById("filtro-status").value.toLowerCase();
