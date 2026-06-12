@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico de Orçamentos - SCP</title>
+  <link rel="stylesheet" href="../CSS/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar no-print">
+    <div class="dropdown">
+      <button class="dropbtn">Cadastros ▼</button>
+      <div class="dropdown-content">
+        <a href="categorias.html">Categorias</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="orcamentos.html">Orçamentos</a>
+        <a href="lista-orcamentos.html">Histórico Orc.</a>
+        <a href="usuarios.html">Usuários</a>
+      </div>
+    </div>
+    <a href="menu.html">Sair</a>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="container no-print">
+
+    <div class="card">
+      <h1><i class="fas fa-clipboard-list"></i> Histórico de Orçamentos</h1>
+
+      <!-- Painel de resumo -->
+      <div class="resumo-grid">
+        <div class="resumo-card">
+          <p>Total de Orçamentos</p>
+          <h3 id="resumo-total">0</h3>
+        </div>
+        <div class="resumo-card verde">
+          <p>Valor Total Acumulado</p>
+          <h3 id="resumo-valor">R$ 0,00</h3>
+        </div>
+        <div class="resumo-card laranja">
+          <p>Orçamentos Vencidos</p>
+          <h3 id="resumo-vencidos">0</h3>
+        </div>
+      </div>
+
+      <!-- Barra de filtros -->
+      <div class="barra-filtros">
+        <div class="search-container">
+          <i class="fas fa-search"></i>
+          <input type="text" id="input-busca" placeholder="Buscar por nº, cliente...">
+        </div>
+        <select id="filtro-status">
+          <option value="todos">Todos os Status</option>
+          <option value="valido"><i class="fas fa-check-circle"></i> Válidos</option>
+          <option value="vencido"><i class="fas fa-exclamation-circle"></i> Vencidos</option>
+        </select>
+      </div>
+
+      <!-- Tabela de histórico -->
+      <table>
+        <thead>
+          <tr>
+            <th>Nº Orç.</th>
+            <th>Cliente</th>
+            <th>Emissão</th>
+            <th>Validade</th>
+            <th>Valor Total</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="corpo-lista-orcamentos">
+          <tr>
+            <td colspan="7">Carregando...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- MODAL DE DETALHES -->
+  <div id="modal-visualizar" class="modal no-print">
+    <div class="modal-conteudo">
+
+      <div class="modal-header">
+        <h2>Detalhes do Orçamento <span id="modal-numero" style="color: #4f46e5;"></span></h2>
+        <div class="modal-header-right">
+          <span id="modal-status-badge" class="badge">---</span>
+          <span class="btn-fechar-modal" id="btn-fechar-modal">&times;</span>
+        </div>
+      </div>
+
+      <div class="modal-dados-grid">
+        <div>
+          <p><strong>Cliente:</strong> <span id="modal-nome-cliente">---</span></p>
+          <p><strong>Tipo:</strong> <span id="modal-tipo-cliente">---</span></p>
+          <p><strong>Documento:</strong> <span id="modal-doc-cliente">---</span></p>
+        </div>
+        <div style="text-align: right;">
+          <p><strong>Emissão:</strong> <span id="modal-data-emissao">---</span></p>
+          <p><strong>Válido até:</strong> <span id="modal-data-validade">---</span></p>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom: 10px; color: #1a1a2e;">Produtos do Orçamento</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Qtd</th>
+            <th>Vl. Unitário</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody id="modal-corpo-itens">
+          <tr>
+            <td colspan="4">Carregando itens...</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-imprimir-modal" style="background-color: #17a2b8;">
+          <i class="fas fa-print"></i> Imprimir Este Orçamento
+        </button>
+        <div>
+          <strong>Total Geral: </strong>
+          <span id="modal-total-geral" class="total-destaque">R$ 0,00</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ÁREA INVISÍVEL USADA NA IMPRESSÃO -->
+  <div class="area-print" id="area-impressao">
+    <div class="print-header-orcamento">
+      <div class="print-logo-placeholder">SCP</div>
+      <div class="print-empresa-info">
+        <h2>Orçamento Comercial</h2>
+        <p>SCP — Sistema de Controle de Produtos e Orçamentos</p>
+        <p>Telefone: (44) 99999-9999 | contato@empresa.com</p>
+      </div>
+    </div>
+
+    <div class="print-dados-cliente">
+      <div>
+        <p><strong>Cliente:</strong> <span id="print-nome-cliente">---</span></p>
+        <p><strong>Tipo:</strong> <span id="print-tipo-cliente">---</span></p>
+        <p><strong>Documento:</strong> <span id="print-doc-cliente">---</span></p>
+        <p><strong>Status:</strong> Proposta Comercial</p>
+      </div>
+      <div style="text-align: right;">
+        <p><strong>Nº Orçamento:</strong> <span id="print-numero">---</span></p>
+        <p><strong>Data de Emissão:</strong> <span id="print-data-emissao">---</span></p>
+        <p><strong>Válido até:</strong> <span id="print-data-validade">---</span></p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom: 10px;">Produtos</h3>
+    <table class="print-tabela-itens">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Qtd</th>
+          <th>Vl. Unitário</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody id="print-corpo-itens"></tbody>
+    </table>
+
+    <div class="print-total">
+      <strong>Valor Total do Orçamento: </strong>
+      <span id="print-total">R$ 0,00</span>
+    </div>
+  </div>
+
+  <footer class="no-print">
+    SCP — Sistema de Controle de Produtos e Orçamentos &copy; 2026
+  </footer>
+
+  <script src="../JS/lista-orcamentos.js"></script>
+</body>
+
+</html>
