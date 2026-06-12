@@ -21,7 +21,7 @@ function mostrarMensagem(texto, tipo, redirecionarDepois = false) {
 
   if (redirecionarDepois) {
     temporizadorMensagem = setTimeout(function () {
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }, 2000);
   }
 }

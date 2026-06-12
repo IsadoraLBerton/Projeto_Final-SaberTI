@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // PROTEÇÃO DE TELA: Se não houver usuário salvo na sessão, manda de volta pro login
   if (!usuarioLogado) {
     alert("Acesso negado! Por favor, faça login primeiro.");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return;
   }
 
@@ -21,5 +21,5 @@ function sair() {
   // Remove o dado de sessão armazenada no login
   sessionStorage.removeItem("usuarioLogado");
   // Manda o usuário de volta para a tela de login
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
