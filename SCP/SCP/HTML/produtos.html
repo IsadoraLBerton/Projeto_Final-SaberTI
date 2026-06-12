@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Produtos - SCP</title>
   <link rel="stylesheet" href="../CSS/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -69,7 +70,10 @@
       <h2>Produtos Cadastrados</h2>
 
       <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <input type="text" id="campo-busca" placeholder="🔍 Buscar por descrição ou categoria..." style="flex: 1;">
+        <div class="search-container" style="flex: 1;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="campo-busca" placeholder="Buscar por descrição ou categoria...">
+        </div>
         <select id="filtro-status" style="width: 140px;">
           <option value="">Todos</option>
           <option value="ativo">Ativos</option>
