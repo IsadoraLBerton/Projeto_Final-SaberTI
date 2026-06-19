@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orçamentos - SCP</title>
+  <link rel="stylesheet" href="../CSS/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <div class="navbar no-print">
+    <div class="dropdown">
+      <button class="dropbtn">Cadastros ▼</button>
+      <div class="dropdown-content">
+        <a href="categorias.html">Categorias</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="orcamentos.html">Orçamentos</a>
+        <a href="lista-orcamentos.html">Histórico Orc.</a>
+        <a href="usuarios.html">Usuários</a>
+      </div>
+    </div>
+    <a href="menu.html">Sair</a>
+  </div>
+
+  <div class="container">
+
+    <form id="form-orçamento">
+      <input type="hidden" id="codigo-orcamento">
+
+      <!-- Cabeçalho que aparece SOMENTE na impressão -->
+      <div class="print-header print-only">
+        <div class="print-logo-area">
+          <div class="print-logo-placeholder">SCP</div>
+        </div>
+        <div class="print-title-area">
+          <h2>Orçamento Comercial</h2>
+          <p>SCP — Sistema de Controle de Produtos e Orçamentos</p>
+          <p>Telefone: (44) 99999-9999 | contato@empresa.com</p>
+        </div>
+      </div>
+
+      <!-- Card 1: Dados do cabeçalho do orçamento -->
+      <div class="card">
+        <h1 class="no-print">Tela de Orçamentos</h1>
+
+        <!-- Mensagem de feedback (sucesso/erro) -->
+        <div id="mensagem" class="mensagem no-print"></div>
+
+        <!-- Campos do orçamento: lado a lado em tela grande -->
+        <div class="no-print">
+          <label for="cliente-orcamento">Cliente *</label>
+          <select id="cliente-orcamento" required>
+            <option value="">Selecionar Cliente</option>
+          </select>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px;">
+            <div>
+              <label for="data-orcamento">Data do Orçamento *</label>
+              <input type="date" id="data-orcamento" required>
+            </div>
+            <div>
+              <label for="data-validade">Data de Validade *</label>
+              <input type="date" id="data-validade" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dados que aparecem só na impressão -->
+        <div class="print-dados-orcamento print-only">
+          <div class="print-col">
+            <p><strong>Cliente:</strong> <span id="print-nome-cliente">---</span></p>
+            <p><strong>Status:</strong> Proposta Comercial</p>
+          </div>
+          <div class="print-col" style="text-align: right;">
+            <p><strong>Data de Emissão:</strong> <span id="print-data-emissao">--/--/----</span></p>
+            <p><strong>Válido Até:</strong> <span id="print-data-validade">--/--/----</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Itens do orçamento -->
+      <div class="card">
+        <h2 class="no-print">Itens do Orçamento</h2>
+
+        <!-- Formulário para adicionar um item -->
+        <div class="form-section-item no-print">
+          <div>
+            <label for="produto-item">Produto *</label>
+            <select id="produto-item">
+              <option value="">Selecionar Produto</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="quantidade-item">Quantidade *</label>
+            <input type="number" id="quantidade-item" step="0.01" min="0.01" placeholder="0.00">
+          </div>
+
+          <div>
+            <label for="valor-unitario-item">Valor Unitário</label>
+            <!-- readonly: preenchido automaticamente quando o produto é escolhido -->
+            <input
+              type="number"
+              id="valor-unitario-item"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              readonly
+              style="background-color: #e9ecef; cursor: not-allowed;"
+            >
+          </div>
+
+          <div style="display: flex; align-items: flex-end;">
+            <button type="button" id="btn-adicionar-item" style="background-color: #28a745; width: 100%;">
+              + Adicionar
+            </button>
+          </div>
+        </div>
+
+        <br class="no-print">
+
+        <!-- Tabela de itens já adicionados -->
+        <table id="tabela-itens-orcamento">
+          <thead>
+            <tr>
+              <th>Prod. ID</th>
+              <th>Descrição</th>
+              <th>Quantidade</th>
+              <th>Valor Unit.</th>
+              <th>Total Item</th>
+              <th class="no-print">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="corpo-itens-orcamento">
+            <!-- Preenchido pelo JS -->
+          </tbody>
+        </table>
+
+        <!-- Total geral — alinhado à direita -->
+        <div class="total-geral-container" style="text-align: right; margin-top: 20px; font-size: 1.2rem;">
+          <strong>Valor Total do Orçamento: </strong>
+          <span id="valor-total-orcamento" style="color: #1a1a2e;">R$ 0,00</span>
+        </div>
+      </div>
+
+      <!-- Botões de ação -->
+      <div class="form-buttons no-print" style="margin-top: 10px;">
+        <button type="submit"><i class="fas fa-save"></i> Salvar Orçamento</button>
+        <button
+          type="button"
+          id="btn-imprimir"
+          style="background-color: #17a2b8;"
+        >
+          <i class="fas fa-print"></i> Imprimir
+        </button>
+        <button type="reset" class="btn-limpar">Limpar Tudo</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <footer class="no-print">
+    SCP — Sistema de Controle de Produtos e Orçamentos &copy; 2026
+  </footer>
+
+  <script src="../JS/movimentacao-orcamentos.js"></script>
+</body>
+
+</html>
